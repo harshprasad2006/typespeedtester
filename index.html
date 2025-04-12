@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Typing Speed Test</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1e1e2e, #3a3a5a);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #ffd700, #ff8c00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(10px);
+      padding: 25px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 650px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+      transition: all 0.3s ease-in-out;
+    }
+
+    #quote {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      line-height: 1.7;
+      min-height: 80px;
+      letter-spacing: 0.5px;
+    }
+
+    #quote span {
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .input-box {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      margin-top: 10px;
+      background: #fff;
+      color: #333;
+    }
+
+    .stats {
+  margin-top: 2px;
+  font-size: 1.1rem;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+    .highlight {
+      color: #00ffcc;
+    }
+
+    .wrong {
+      color: #ff4c4c;
+    }
+
+    button {
+      padding: 12px 20px;
+      margin-top: 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, #ffd700, #ff8c00);
+      color: black;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #ff8c00, #ffd700);
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 500px) {
+      .stats {
+        flex-direction: column;
+        gap: 0.2px;
+        align-items: center;
+      }
+    }
+
+    .unit {
+      margin-left: 2px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔥 Typing Speed Test</h1>
+  <div class="container">
+    <p id="quote">Loading...</p>
+    <input type="text" id="input" class="input-box" placeholder="Start typing..." />
+        <div class="stats">
+            <span>⏳ Time Left: <span id="timer">30</span><span class="unit">s</span></span> | <span>🚀 WPM: <span id="wpm">0</span></span> | <span>🎯 Accuracy: <span id="accuracy">100%</span></span>
+          </div>
+       
+    <button id="restart">Restart</button>
+  </div>
+
+  <script>
+    const quotes = [
+      "The quick brown fox jumps over the lazy dog.",
+      "Speed is not everything, but accuracy is key.",
+      "Typing fast is an art that takes practice.",
+      "Code more, type better, and break your limits!",
+      "Stay focused, type fast, and win the challenge!"
+    ];
+
+    let timer = 30, timeLeft = timer, charIndex = 0, mistakes = 0, interval;
+    const quoteDisplay = document.getElementById("quote");
+    const inputField = document.getElementById("input");
+    const wpmDisplay = document.getElementById("wpm");
+    const accuracyDisplay = document.getElementById("accuracy");
+    const timerDisplay = document.getElementById("timer");
+    const restartBtn = document.getElementById("restart");
+
+    function loadNewQuote() {
+      let randomIndex = Math.floor(Math.random() * quotes.length);
+      quoteDisplay.innerHTML = quotes[randomIndex]
+        .split("")
+        .map(char => `<span>${char}</span>`)
+        .join("");
+      charIndex = mistakes = 0;
+      inputField.value = "";
+      timeLeft = timer;
+      timerDisplay.textContent = timeLeft;
+      wpmDisplay.textContent = 0;
+      accuracyDisplay.textContent = "100%";
+      clearInterval(interval);
+    }
+
+    function startTyping() {
+      const characters = quoteDisplay.querySelectorAll("span");
+      let typedChar = inputField.value.charAt(charIndex);
+
+      if (charIndex < characters.length && timeLeft > 0) {
+        if (!interval) {
+          interval = setInterval(() => {
+            if (timeLeft > 0) {
+              timeLeft--;
+              timerDisplay.textContent = timeLeft;
+            } else {
+              clearInterval(interval);
+              inputField.disabled = true;
+            }
+          }, 1000);
+        }
+
+        if (typedChar == null) return;
+
+        if (typedChar === characters[charIndex].textContent) {
+          characters[charIndex].classList.add("highlight");
+        } else {
+          characters[charIndex].classList.add("wrong");
+          mistakes++;
+        }
+
+        charIndex++;
+
+        const correctChars = charIndex - mistakes;
+        const accuracy = charIndex ? ((correctChars / charIndex) * 100).toFixed(2) : 100;
+        accuracyDisplay.textContent = accuracy + "%";
+
+        let wpm = Math.round((charIndex / 5) / ((timer - timeLeft) / 60));
+        wpmDisplay.textContent = wpm > 0 ? wpm : 0;
+      }
+    }
+
+    function restartTest() {
+      loadNewQuote();
+      inputField.disabled = false;
+      inputField.focus();
+    }
+
+    inputField.addEventListener("input", startTyping);
+    restartBtn.addEventListener("click", restartTest);
+    window.onload = loadNewQuote;
+  </script>
+</body>
+</html>
+
