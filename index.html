@@ -73,13 +73,13 @@
     }
 
     .stats {
-  margin-top: 2px;
-  font-size: 1.1rem;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
+      margin-top: 2px;
+      font-size: 1.1rem;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
 
     .highlight {
       color: #00ffcc;
@@ -125,10 +125,11 @@
   <div class="container">
     <p id="quote">Loading...</p>
     <input type="text" id="input" class="input-box" placeholder="Start typing..." />
-        <div class="stats">
-            <span>⏳ Time Left: <span id="timer">30</span><span class="unit">s</span></span> | <span>🚀 WPM: <span id="wpm">0</span></span> | <span>🎯 Accuracy: <span id="accuracy">100%</span></span>
-          </div>
-       
+    <div class="stats">
+      <span>⏳ Time Left: <span id="timer">30</span><span class="unit">s</span></span> |
+      <span>🚀 WPM: <span id="wpm">0</span></span> |
+      <span>🎯 Accuracy: <span id="accuracy">100%</span></span>
+    </div>
     <button id="restart">Restart</button>
   </div>
 
@@ -198,6 +199,11 @@
 
         let wpm = Math.round((charIndex / 5) / ((timer - timeLeft) / 60));
         wpmDisplay.textContent = wpm > 0 ? wpm : 0;
+
+        if (charIndex === characters.length) {
+          clearInterval(interval);
+          inputField.disabled = true;
+        }
       }
     }
 
@@ -213,4 +219,5 @@
   </script>
 </body>
 </html>
+
 
